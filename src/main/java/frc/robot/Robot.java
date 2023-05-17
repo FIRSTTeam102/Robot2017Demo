@@ -23,7 +23,7 @@ public class Robot extends TimedRobot {
 
 	MecanumDrive mecanumDrive = new MecanumDrive(frontLeft, backLeft, frontRight, backRight);
 
-	private double maxSpeed = 1.0;
+	private double maxSpeed = 0.2; // FOR DEMO
 	private GenericEntry maxSpeedDash;
 
 	@Override
@@ -53,8 +53,8 @@ public class Robot extends TimedRobot {
 		maxSpeed = maxSpeedDash.getDouble(maxSpeed);
 		mecanumDrive.driveCartesian(
 			MathUtil.applyDeadband(-controller.getLeftY(), deadband) * maxSpeed,
-			MathUtil.applyDeadband(-controller.getLeftX(), deadband) * maxSpeed,
-			MathUtil.applyDeadband(-controller.getRightY(), deadband) * maxSpeed);
+			MathUtil.applyDeadband(controller.getLeftX(), deadband) * Math.min(maxSpeed + 0.1, 1), // strafe is slower
+			MathUtil.applyDeadband(controller.getRightX(), deadband) * maxSpeed);
 
 		// todo: implement shooter?
 	}
