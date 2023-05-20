@@ -14,8 +14,8 @@ import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import frc.robot.gyro.GyroIO;
 import frc.robot.gyro.ADW22307;
+import frc.robot.gyro.GyroIO;
 
 public class Robot extends TimedRobot {
 	XboxController controller = new XboxController(0);
@@ -24,6 +24,7 @@ public class Robot extends TimedRobot {
 	WPI_TalonSRX backLeft = new WPI_TalonSRX(1);
 	WPI_TalonSRX frontRight = new WPI_TalonSRX(8);
 	WPI_TalonSRX backRight = new WPI_TalonSRX(7);
+	private static final double ramp_s = 0.1;
 
 	MecanumDrive mecanumDrive = new MecanumDrive(frontLeft, backLeft, frontRight, backRight);
 
@@ -48,6 +49,11 @@ public class Robot extends TimedRobot {
 		frontRight.setNeutralMode(NeutralMode.Brake);
 		backRight.setNeutralMode(NeutralMode.Brake);
 
+		frontLeft.configOpenloopRamp(ramp_s);
+		backLeft.configOpenloopRamp(ramp_s);
+		frontRight.configOpenloopRamp(ramp_s);
+		backRight.configOpenloopRamp(ramp_s);
+
 		var driveTab = Shuffleboard.getTab("drive");
 		maxSpeedDash = driveTab
 			.addPersistent("max speed", maxSpeed)
@@ -62,11 +68,16 @@ public class Robot extends TimedRobot {
 			.withPosition(4, 0)
 			.withSize(2, 2)
 			.getEntry();
+		driveTab.add("gyro", gyro)
+			.withWidget(BuiltInWidgets.kGyro)
+			.withPosition(6, 0)
+			.withProperties(Map.of("Starting angle", 0))
+			.withSize(4, 4);
 
 		LiveWindow.enableAllTelemetry();
 	}
 
-	static double deadband = 0.1;
+	private static final double deadband = 0.1;
 
 	@Override
 	public void teleopPeriodic() {
