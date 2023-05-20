@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.AnalogGyro;
  */
 
 public class ADW22307 implements GyroIO {
+	/** @param channel rio analog input pin, can be 0-1 */
 	public ADW22307(int channel) {
 		gyro = new AnalogGyro(channel);
 

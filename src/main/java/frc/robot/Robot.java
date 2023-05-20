@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.gyro.GyroIO;
-import frc.robot.gyro.GyroIO.NoGyro;
+import frc.robot.gyro.ADW22307;
 
 public class Robot extends TimedRobot {
 	XboxController controller = new XboxController(0);
@@ -37,7 +37,8 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotInit() {
-		gyro = new NoGyro(); // new ADW22307(1); // new ADIS16470();
+		// gyro = new NoGyro();
+		gyro = new ADW22307(1); // new ADIS16470();
 
 		frontRight.setInverted(true);
 		backRight.setInverted(true);
