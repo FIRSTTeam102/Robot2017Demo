@@ -83,6 +83,9 @@ public class Robot extends TimedRobot {
 	public void teleopPeriodic() {
 		maxSpeed = maxSpeedDash.getDouble(maxSpeed);
 
+		if (controller.getLeftTriggerAxis() > 0.5)
+			maxSpeed *= 0.5;
+
 		if (controller.getAButtonPressed()) {
 			fieldOriented = !fieldOriented;
 			fieldOrientedDash.setBoolean(fieldOriented);
@@ -92,13 +95,22 @@ public class Robot extends TimedRobot {
 			gyro.setYaw(0);
 		}
 
-		mecanumDrive.driveCartesian(
-			MathUtil.applyDeadband(-controller.getLeftY(), deadband) * maxSpeed,
-			MathUtil.applyDeadband(controller.getLeftX(), deadband) * (maxSpeed + 0.1), // strafe is slower
-			MathUtil.applyDeadband(controller.getRightX(), deadband) * maxSpeed,
-			Rotation2d.fromDegrees(fieldOriented && gyro.isConnected()
-				? gyro.getYaw_deg()
-				: 0));
+		double brakePercent = controller.getRightTriggerAxis();
+		if (brakePercent > 0.1) {
+			frontLeft.set(-frontLeft.getMotorOutputPercent() * brakePercent);
+			backLeft.set(-backLeft.getMotorOutputPercent() * brakePercent);
+			frontRight.set(-frontRight.getMotorOutputPercent() * brakePercent);
+			backRight.set(-backRight.getMotorOutputPercent() * brakePercent);
+			mecanumDrive.feed();
+		} else {
+			mecanumDrive.driveCartesian(
+				MathUtil.applyDeadband(-controller.getLeftY(), deadband) * maxSpeed,
+				MathUtil.applyDeadband(controller.getLeftX(), deadband) * (maxSpeed + 0.1), // strafe is slower
+				MathUtil.applyDeadband(controller.getRightX(), deadband) * maxSpeed,
+				Rotation2d.fromDegrees(fieldOriented && gyro.isConnected()
+					? gyro.getYaw_deg()
+					: 0));
+		}
 
 		// todo: implement shooter?
 	}
